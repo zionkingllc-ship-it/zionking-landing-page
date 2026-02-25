@@ -4,9 +4,9 @@ Official landing page for **ZionKing LLC** — a faith-rooted technology company
 
 ## About
 
-ZionKing LLC builds innovative software solutions including **Ziona**, an AI-powered app to help people discover and book professionals based on faith, values, and community.
+ZionKing LLC builds innovative software solutions including **Ziona**, A social media platform for the Christians.
 
-**Website**: [https://zionking.netlify.app](https://zionking.netlify.app)  
+**Website**: [https://zionking.org](https://zionking.org)  
 **Contact**: [Zionkingllc@gmail.com](mailto:Zionkingllc@gmail.com)
 
 ## Tech Stack
