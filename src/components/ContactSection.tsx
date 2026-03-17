@@ -37,11 +37,11 @@ const ContactSection = () => {
             </p>
             <div className="space-y-4">
               <a
-                href="mailto:Zionkingllc@gmail.com"
+                href="mailto:info@zionking.org"
                 className="flex items-center gap-3 text-foreground hover:text-accent transition-colors"
               >
                 <Mail className="w-5 h-5 text-accent" />
-                Zionkingllc@gmail.com
+                info@zionking.org
               </a>
               <a
                 href="tel:+13177204898"

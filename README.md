@@ -7,7 +7,7 @@ Official landing page for **ZionKing LLC** — a faith-rooted technology company
 ZionKing LLC builds innovative software solutions including **Ziona**, A social media platform for the Christians.
 
 **Website**: [https://zionking.org](https://zionking.org)  
-**Contact**: [Zionkingllc@gmail.com](mailto:Zionkingllc@gmail.com)
+**Contact**: [info@zionking.org](mailto:info@zionking.org)
 
 ## Tech Stack
 
