@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { trackStandardEvent } from "../lib/pixel";
 
 const WaitlistForm = () => {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -12,6 +13,11 @@ const WaitlistForm = () => {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+
+    // Track Meta Pixel Event
+    trackStandardEvent('Lead', {
+      content_name: 'Waitlist Signup',
+    });
 
     fetch("/", {
       method: "POST",
@@ -164,11 +170,10 @@ const WaitlistForm = () => {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className={`w-full rounded-xl px-6 py-4 text-base font-semibold text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 ${
-          status === "submitting"
+        className={`w-full rounded-xl px-6 py-4 text-base font-semibold text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 ${status === "submitting"
             ? "bg-primary/70 cursor-not-allowed"
             : "bg-primary hover:bg-primary-dark"
-        }`}
+          }`}
       >
         {status === "submitting" ? "Submitting..." : "Join the Waitlist"}
       </button>
