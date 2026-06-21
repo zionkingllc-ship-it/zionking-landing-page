@@ -1,6 +1,5 @@
-import footerWordmark from "@/assets/footer-wordmark.png";
 import zionkinglogowhite from "@/assets/zionkinglogowhite.svg";
-import { FaTiktok } from "react-icons/fa6"
+import { FaTiktok } from "react-icons/fa6";
 import { ArrowUp } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -19,7 +18,15 @@ const Footer = () => {
           {/* Logo — centered on mobile, left on desktop */}
           <div className="flex justify-center md:justify-start">
             <Link to="/" aria-label="Go to home page">
-              <img src={zionkinglogowhite} alt="Zion King" className="h-12 w-auto" />
+              <img
+                src={zionkinglogowhite}
+                alt="Zion King"
+                className="h-12 w-auto"
+                width={237}
+                height={148}
+                loading="lazy"
+                decoding="async"
+              />
             </Link>
           </div>
 

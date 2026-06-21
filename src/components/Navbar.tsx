@@ -34,7 +34,14 @@ const Navbar = () => {
       <div className="container">
         <nav className="flex items-center justify-between gap-4 py-4">
           <Link to="/" className="shrink-0" aria-label="Go to home page">
-            <img src={zionKingLogo} alt="Ziona" className="" />
+            <img
+              src={zionKingLogo}
+              alt="Ziona"
+              width={33}
+              height={17}
+              decoding="async"
+              fetchPriority="high"
+            />
           </Link>
 
           <div className="hidden flex-1 justify-center md:flex">

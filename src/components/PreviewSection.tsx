@@ -11,7 +11,10 @@ const PreviewSection = () => {
                 src={feedMockup}
                 alt="Ziona app feed preview"
                 className="w-full h-auto"
+                width={590}
+                height={1278}
                 loading="lazy"
+                decoding="async"
               />
             </div>
           </div>

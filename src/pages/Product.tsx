@@ -1,15 +1,22 @@
 import { Button } from "@/components/ui/button";
 import zionaWordMarkColumn from "@/assets/ziona-wordmark-column.png";
-import playstore from "@/assets/Playstore.png"
+import playstore from "@/assets/Playstore.png";
 import { TbBrandAppleFilled } from "react-icons/tb";
-import smallLeftImage from "@/assets/image 69.png"
+import smallLeftImage from "@/assets/image 69.png";
 
 const Product = () => {
   return (
     <section className="px-6">
       <div className="w-full px-4 md:px-20 py-5 flex flex-col md:flex-row justify-center items-center md:items-start gap-12 overflow-hidden">
         <div className="w-72 h-96 flex flex-col justify-center items-center gap-10 shrink-0">
-          <img src={zionaWordMarkColumn} alt="Ziona Wordmark Column" />
+          <img
+            src={zionaWordMarkColumn}
+            alt="Ziona Wordmark Column"
+            width={287}
+            height={350}
+            decoding="async"
+            fetchPriority="high"
+          />
         </div>
 
         <div className="w-full max-w-[958px] flex flex-col justify-start items-center md:items-start gap-10">
@@ -82,7 +89,15 @@ const Product = () => {
             </button>
 
             <button className="flex items-center justify-center gap-2 rounded-2xl bg-black px-3 py-2 text-white transition hover:scale-[1.02] hover:opacity-90 lg:gap-3 lg:px-5 lg:py-3">
-              <img src={playstore} alt="playstore" className="h-5 w-5 lg:h-7 lg:w-7" />
+              <img
+                src={playstore}
+                alt="playstore"
+                className="h-5 w-5 lg:h-7 lg:w-7"
+                width={28}
+                height={32}
+                loading="lazy"
+                decoding="async"
+              />
               <div className="flex flex-col items-start leading-tight">
                 <span className="text-[9px] font-medium uppercase tracking-wide text-white/70 lg:text-[11px]">
                   Get it on
@@ -95,7 +110,14 @@ const Product = () => {
           </div>
         </div>
 
-        <img src={smallLeftImage} alt="ziona-sample-image" />
+        <img
+          src={smallLeftImage}
+          alt="ziona-sample-image"
+          width={327}
+          height={651}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
     </section>
   );

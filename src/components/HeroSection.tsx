@@ -1,19 +1,76 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import zionKingGif from "@/assets/zion-king-video.gif";
+import zionKingVideo from "@/assets/zion-king-video.mp4";
+import zionKingPoster from "@/assets/zion-king-video-poster.jpg";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import LeftImage from "@/assets/Frame 2609262.png";
 import RightImage from "@/assets/Frame 2609263.png";
-import smallLeftImage from "@/assets/image 69.png"
-import smallRightImage from "@/assets/image 70.png"
+import smallLeftImage from "@/assets/image 69.png";
+import smallRightImage from "@/assets/image 70.png";
 
 const exploreButtonClassName =
   "w-64 px-6 py-4 bg-[#181419] rounded-[10px] shadow-[inset_0px_6px_4px_0px_rgba(166,163,57,0.16)] font-bold text-lg text-primary-foreground hover:bg-[#181419]/95";
 
 const HeroSection = () => {
+  const heroPreviewRef = useRef<HTMLDivElement | null>(null);
   const flagshipSectionRef = useRef<HTMLDivElement | null>(null);
+  const [shouldLoadHeroVideo, setShouldLoadHeroVideo] = useState(false);
   const [areFlagshipImagesVisible, setAreFlagshipImagesVisible] = useState(false);
+
+  useEffect(() => {
+    const preview = heroPreviewRef.current;
+
+    if (!preview) {
+      return;
+    }
+
+    let idleCallbackId: number | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const browserWindow = window as Window & {
+      requestIdleCallback?: (
+        callback: IdleRequestCallback,
+        options?: IdleRequestOptions,
+      ) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+    const loadAnimatedPreview = () => {
+      if (browserWindow.requestIdleCallback) {
+        idleCallbackId = browserWindow.requestIdleCallback(
+          () => setShouldLoadHeroVideo(true),
+          { timeout: 2000 },
+        );
+        return;
+      }
+
+      timeoutId = setTimeout(() => setShouldLoadHeroVideo(true), 500);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          loadAnimatedPreview();
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "200px 0px", threshold: 0.01 },
+    );
+
+    observer.observe(preview);
+
+    return () => {
+      observer.disconnect();
+
+      if (idleCallbackId !== undefined && browserWindow.cancelIdleCallback) {
+        browserWindow.cancelIdleCallback(idleCallbackId);
+      }
+
+      if (timeoutId !== undefined) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const section = flagshipSectionRef.current;
@@ -51,12 +108,27 @@ const HeroSection = () => {
         </Button>
       </div>
       <div className="mt-8 w-full pb-8 lg:pb-0 px-4 lg:px-0 sm:mt-10 lg:mt-12">
-        <div className="overflow-hidden bg-muted shadow-lg">
-          <img
-            src={zionKingGif}
-            alt="Ziona product preview animation"
+        <div ref={heroPreviewRef} className="overflow-hidden bg-muted shadow-lg">
+          <video
             className="h-auto w-full object-cover"
-          />
+            width={1280}
+            height={720}
+            poster={zionKingPoster}
+            src={shouldLoadHeroVideo ? zionKingVideo : undefined}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload={shouldLoadHeroVideo ? "metadata" : "none"}
+            aria-label="Ziona product preview animation"
+          >
+            <img
+              src={zionKingPoster}
+              alt="Ziona product preview animation"
+              width={1280}
+              height={720}
+            />
+          </video>
         </div>
       </div>
       <div className=" bg-[#181419] lg:pt-[81px] py-8 px-[30px] lg:pb-[115px] lg:px-[64px]">
@@ -94,71 +166,86 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-      <div
-        ref={flagshipSectionRef}
-        className="hidden md:block relative overflow-hidden bg-[#eceff1] min-h-[820px] lg:px-10 lg:py-24 xl:min-h-[920px]"
-      >
-        <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
-          <h3 className="text-4xl font-bold text-[#181419] font-['Helvetica'] lg:text-6xl">
+      <div ref={flagshipSectionRef}>
+        <div className="hidden md:block relative overflow-hidden bg-[#eceff1] min-h-[820px] lg:px-10 lg:py-24 xl:min-h-[920px]">
+          <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
+            <h3 className="text-4xl font-bold text-[#181419] font-['Helvetica'] lg:text-6xl">
+              Our Flagship Product
+            </h3>
+            <p className="mt-4 max-w-2xl text-center text-lg font-normal text-[#423348] font-['Roboto'] leading-8 lg:mt-6 lg:text-2xl">
+              <span className="font-bold">Ziona</span>
+              <span> is a faith focused social platform built for both discovery and meaningful interaction. With a dynamic content feed and Interactive </span>
+              <span className="font-bold">Faith Circles</span>
+              <span>, users grow together in faith.</span>
+            </p>
+            <Button
+              asChild
+              size="lg"
+              className="mt-10 flex w-64 items-center justify-center bg-[#181419] px-6 py-4 text-lg font-bold text-primary-foreground shadow-[inset_0px_6px_4px_0px_rgba(166,163,57,0.16)] hover:bg-[#181419]/95"
+            >
+              <Link to="/product">Join Ziona</Link>
+            </Button>
+          </div>
+          <img
+            src={LeftImage}
+            alt="left-image"
+            width={475}
+            height={713}
+            loading="lazy"
+            decoding="async"
+            className={[
+              "pointer-events-none absolute left-0 top-[13rem] hidden w-[180px] transition-all duration-700 ease-out lg:block xl:w-auto",
+              areFlagshipImagesVisible ? "translate-x-0 opacity-100" : "-translate-x-16 opacity-0",
+            ].join(" ")}
+          />
+          <img
+            src={RightImage}
+            alt="right-image"
+            width={443}
+            height={714}
+            loading="lazy"
+            decoding="async"
+            className={[
+              "pointer-events-none absolute right-0 top-0 hidden w-[180px] transition-all duration-700 ease-out lg:block xl:w-auto",
+              areFlagshipImagesVisible ? "translate-x-0 opacity-100" : "translate-x-16 opacity-0",
+            ].join(" ")}
+          />
+        </div>
+        <div className="md:hidden flex flex-col items-center justify-center px-[29.5px] space-y-6 mt-8">
+          <h3 className="text-4xl font-bold text-[#181419] font-['Helvetica'] w-max">
             Our Flagship Product
           </h3>
-          <p className="mt-4 max-w-2xl text-center text-lg font-normal text-[#423348] font-['Roboto'] leading-8 lg:mt-6 lg:text-2xl">
+          <img
+            src={smallLeftImage}
+            alt="left-image"
+            width={327}
+            height={651}
+            loading="lazy"
+            decoding="async"
+            className={[
+              "pointer-events-none w-[180px] transition-all duration-700 ease-out lg:block xl:w-auto",
+              areFlagshipImagesVisible ? "translate-x-0 opacity-100" : "-translate-x-16 opacity-0",
+            ].join(" ")}
+          />
+          <p className="mt-4 max-w-2xl text-center text-lg font-normal text-[#423348] font-['Roboto'] leading-8 ">
             <span className="font-bold">Ziona</span>
             <span> is a faith focused social platform built for both discovery and meaningful interaction. With a dynamic content feed and Interactive </span>
             <span className="font-bold">Faith Circles</span>
             <span>, users grow together in faith.</span>
           </p>
-          <Button
-            asChild
-            size="lg"
-            className="mt-10 flex w-64 items-center justify-center bg-[#181419] px-6 py-4 text-lg font-bold text-primary-foreground shadow-[inset_0px_6px_4px_0px_rgba(166,163,57,0.16)] hover:bg-[#181419]/95"
-          >
-            <Link to="/product">Join Ziona</Link>
-          </Button>
+          <img
+            src={smallRightImage}
+            alt="right-image"
+            width={328}
+            height={653}
+            loading="lazy"
+            decoding="async"
+            className={[
+              "pointer-events-none w-[180px] transition-all duration-700 ease-out lg:block xl:w-auto",
+              areFlagshipImagesVisible ? "translate-x-0 opacity-100" : "translate-x-16 opacity-0",
+            ].join(" ")}
+          />
         </div>
-        <img
-          src={LeftImage}
-          alt="left-image"
-          className={[
-            "pointer-events-none absolute left-0 top-[13rem] hidden w-[180px] transition-all duration-700 ease-out lg:block xl:w-auto",
-            areFlagshipImagesVisible ? "translate-x-0 opacity-100" : "-translate-x-16 opacity-0",
-          ].join(" ")}
-        />
-        <img
-          src={RightImage}
-          alt="right-image"
-          className={[
-            "pointer-events-none absolute right-0 top-0 hidden w-[180px] transition-all duration-700 ease-out lg:block xl:w-auto",
-            areFlagshipImagesVisible ? "translate-x-0 opacity-100" : "translate-x-16 opacity-0",
-          ].join(" ")}
-        />
-      </div>
-      <div className="md:hidden flex flex-col items-center justify-center px-[29.5px] space-y-6 mt-8">
-        <h3 className="text-4xl font-bold text-[#181419] font-['Helvetica'] w-max">
-          Our Flagship Product
-        </h3>
-        <img
-          src={smallLeftImage}
-          alt="left-image"
-          className={[
-            "pointer-events-none w-[180px] transition-all duration-700 ease-out lg:block xl:w-auto",
-            areFlagshipImagesVisible ? "translate-x-0 opacity-100" : "-translate-x-16 opacity-0",
-          ].join(" ")}
-        />
-        <p className="mt-4 max-w-2xl text-center text-lg font-normal text-[#423348] font-['Roboto'] leading-8 ">
-          <span className="font-bold">Ziona</span>
-          <span> is a faith focused social platform built for both discovery and meaningful interaction. With a dynamic content feed and Interactive </span>
-          <span className="font-bold">Faith Circles</span>
-          <span>, users grow together in faith.</span>
-        </p>
-        <img
-          src={smallRightImage}
-          alt="right-image"
-          className={[
-            "pointer-events-none w-[180px] transition-all duration-700 ease-out lg:block xl:w-auto",
-            areFlagshipImagesVisible ? "translate-x-0 opacity-100" : "translate-x-16 opacity-0",
-          ].join(" ")}
-        />
       </div>
 
       {/* What We Stand For */}

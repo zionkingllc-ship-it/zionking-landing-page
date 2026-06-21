@@ -40,6 +40,10 @@ const About = () => {
               className="h-48 w-full rounded-xl object-cover"
               src={aboutImageOne}
               alt="Vision supporting illustration"
+              width={362}
+              height={198}
+              loading="lazy"
+              decoding="async"
             />
 
             <p className="text-xl font-normal leading-8 text-[#393535] font-['Roboto'] xl:text-2xl">
@@ -56,6 +60,10 @@ const About = () => {
               className="h-auto max-h-[420px] w-full max-w-[462px] rounded-xl object-cover"
               src={aboutImageTwo}
               alt="Vision main illustration"
+              width={462}
+              height={315}
+              loading="lazy"
+              decoding="async"
             />
           </div>
 
@@ -83,6 +91,10 @@ const About = () => {
             className="w-80 h-64 object-cover"
             src={aboutImageTwo}
             alt="Vision main illustration"
+            width={462}
+            height={315}
+            loading="lazy"
+            decoding="async"
           />
 
           <p className="w-80 text-[#332b36] text-xl font-semibold font-['Roboto'] leading-7">
@@ -97,6 +109,10 @@ const About = () => {
             className="w-80 h-48 object-cover"
             src={aboutImageOne}
             alt="Vision supporting illustration"
+            width={362}
+            height={198}
+            loading="lazy"
+            decoding="async"
           />
 
           <p className="self-stretch text-[#393535] text-lg font-normal font-['Roboto'] leading-6">
