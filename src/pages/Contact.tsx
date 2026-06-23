@@ -3,21 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail } from "lucide-react";
-
-const SUBMIT_CONTACT_MESSAGE_MUTATION = `
-  mutation SubmitContact($name: String!, $email: String!, $message: String!, $honeypot: String!) {
-    submitContact(brand: ZIONKING, name: $name, email: $email, message: $message, honeypot: $honeypot) {
-      success
-      ticketId
-      error {
-        code
-        message
-        field
-        details
-      }
-    }
-  }
-`;
+import { submitContactForm } from "@/lib/contact";
 
 type ContactFormState = {
   name: string;
@@ -28,24 +14,6 @@ type ContactFormState = {
 type ContactSubmissionState = {
   type: "success" | "error";
   message: string;
-};
-
-type SubmitContactMessageResponse = {
-  data?: {
-    submitContact?: {
-      success: boolean;
-      ticketId?: string | null;
-      error?: {
-        code?: string | null;
-        message?: string | null;
-        field?: string | null;
-        details?: string | null;
-      } | null;
-    };
-  };
-  errors?: Array<{
-    message?: string;
-  }>;
 };
 
 const Contact = () => {
@@ -76,37 +44,12 @@ const Contact = () => {
     setSubmissionState(null);
 
     try {
-      const response = await fetch(import.meta.env.VITE_GRAPHQL_URL ?? "/graphql", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: SUBMIT_CONTACT_MESSAGE_MUTATION,
-          variables: {
-            name,
-            email,
-            message,
-            honeypot: "",
-          },
-        }),
+      await submitContactForm({
+        brand: "ZIONKING",
+        name,
+        email,
+        message,
       });
-
-      if (!response.ok) {
-        throw new Error("Unable to submit your message right now. Please try again.");
-      }
-
-      const result = (await response.json()) as SubmitContactMessageResponse;
-      const payload = result.data?.submitContact;
-      const graphQLErrorMessage = result.errors?.[0]?.message;
-
-      if (graphQLErrorMessage) {
-        throw new Error(graphQLErrorMessage);
-      }
-
-      if (!payload?.success) {
-        throw new Error(payload?.error?.message ?? "Unable to submit your message right now.");
-      }
 
       setSubmissionState({
         type: "success",

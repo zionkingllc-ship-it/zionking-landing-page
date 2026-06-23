@@ -61,3 +61,14 @@ The application will typically be available at `http://localhost:8080` or `http:
 - **Community Engagement Tools:** Interact with posts through likes, comments, and saves.
 - **Faith Circle:** Specifically designed for deeper fellowship and connection.
 - **Christian Moderation Standards:** Adheres to community guidelines that reflect Christian values.
+
+## Contact Form
+
+The contact form submits through the shared Ziona backend `submitContact` GraphQL mutation with `brand: ZIONKING`. Set `VITE_GRAPHQL_ENDPOINT` to override the production API endpoint (`https://api.ziona.app/graphql/`).
+
+## Deployment Workflow
+
+- Push feature work to `staging` first. CI runs lint, typecheck, tests, build, secret scanning, and a production dependency audit.
+- Netlify's Git integration deploys the matching branch after GitHub receives the push. Optional deploy-hook mode is available through the GitHub `staging` and `Production` environments.
+- Production is promoted only through a pull request from `staging` to `main`.
+- Disable Netlify Git auto-publishing only when both deploy hooks are configured, preventing duplicate deployments.
