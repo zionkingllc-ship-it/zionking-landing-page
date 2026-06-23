@@ -51,7 +51,16 @@ This site is deployed on **Netlify** with automatic CI/CD from the `main` branch
 
 ### Contact Form
 
-The contact form uses **Netlify Forms** — no backend required. Submissions are captured automatically by Netlify and can be viewed in the Netlify dashboard under **Forms → contact**.
+The contact form submits through the shared Ziona backend `submitContact` GraphQL mutation with `brand: ZIONKING`. Set `VITE_GRAPHQL_ENDPOINT` when you need to override the default production API endpoint (`https://api.ziona.app/graphql/`).
+
+## Deployment Workflow
+
+- Push feature work to `staging` first. CI runs lint, typecheck, tests, build, secret scanning, and a production dependency audit.
+- A successful `staging` push is deployed by Netlify's Git integration; when configured, the workflow uses the staging deploy hook instead.
+- Production is promoted only through a pull request from `staging` to `main`.
+- A successful `main` push is deployed by Netlify's Git integration; when configured, the workflow uses the production deploy hook instead.
+- By default, Netlify's Git integration deploys the matching branch after GitHub receives the push. Optional deploy-hook mode is available by setting `NETLIFY_STAGING_DEPLOY_HOOK_URL` in the GitHub `staging` environment and `NETLIFY_PRODUCTION_DEPLOY_HOOK_URL` in the `Production` environment.
+- Disable Netlify Git auto-publishing only when both deploy hooks are configured, preventing duplicate deployments.
 
 ## Project Structure
 

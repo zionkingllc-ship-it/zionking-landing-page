@@ -2,25 +2,43 @@ name: ZionKing Landing CI/CD
 
 on:
   push:
-    branches:
-      - main
-      - staging
+    branches: [main, staging]
   pull_request:
-    branches:
-      - main
-      - staging
+    branches: [main, staging]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   NODE_VERSION: 20
 
 jobs:
+  promotion-policy:
+    name: Staging Promotion Policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Enforce staging promotion into main
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$BASE_REF" = "main" ] && [ "$HEAD_REF" != "staging" ]; then
+            echo "::error::Production changes must be promoted through a pull request from staging to main."
+            exit 1
+          fi
+          echo "Promotion policy satisfied."
+
   quality:
     name: Quality Gate
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -32,7 +50,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      - name: Install dependencies
+      - name: Install locked dependencies
         run: npm ci
 
       - name: Lint
@@ -44,50 +62,74 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Build
+      - name: Build production bundle
         run: npm run build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: zionking-landing-dist
+          name: zionking-landing-dist-${{ github.sha }}
           path: dist
           if-no-files-found: error
+          retention-days: 7
+
+  security:
+    name: Security Gate
+    uses: ./.github/workflows/vulnerability_scanner.yml
+
+  release-gate:
+    name: Release Gate
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [promotion-policy, quality, security]
+    timeout-minutes: 2
+    steps:
+      - name: Verify every required gate passed
+        env:
+          PROMOTION_RESULT: ${{ needs.promotion-policy.result }}
+          QUALITY_RESULT: ${{ needs.quality.result }}
+          SECURITY_RESULT: ${{ needs.security.result }}
+        run: |
+          if [ "$PROMOTION_RESULT" != "success" ] || [ "$QUALITY_RESULT" != "success" ] || [ "$SECURITY_RESULT" != "success" ]; then
+            echo "::error::Release blocked: promotion=$PROMOTION_RESULT quality=$QUALITY_RESULT security=$SECURITY_RESULT"
+            exit 1
+          fi
+          echo "All release gates passed."
 
   deploy-staging:
     name: Deploy Staging
     runs-on: ubuntu-latest
-    needs: quality
+    needs: release-gate
     if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
     environment: staging
+    timeout-minutes: 5
 
     steps:
-      - name: Trigger Netlify staging deploy hook
+      - name: Trigger Netlify staging deployment
         env:
-          NETLIFY_STAGING_DEPLOY_HOOK_URL: ${{ secrets.NETLIFY_STAGING_DEPLOY_HOOK_URL }}
+          DEPLOY_HOOK_URL: ${{ secrets.NETLIFY_STAGING_DEPLOY_HOOK_URL }}
         run: |
-          if [ -z "$NETLIFY_STAGING_DEPLOY_HOOK_URL" ]; then
-            echo "::notice::NETLIFY_STAGING_DEPLOY_HOOK_URL is not configured. Quality checks passed; skipping deploy hook."
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "::notice::No staging deploy hook is configured; Netlify Git integration will handle this branch deployment."
             exit 0
           fi
-
-          curl --fail --show-error --silent --request POST "$NETLIFY_STAGING_DEPLOY_HOOK_URL"
+          curl --fail --show-error --silent --request POST "$DEPLOY_HOOK_URL"
 
   deploy-production:
     name: Deploy Production
     runs-on: ubuntu-latest
-    needs: quality
+    needs: release-gate
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment: production
+    environment: Production
+    timeout-minutes: 5
 
     steps:
-      - name: Trigger Netlify production deploy hook
+      - name: Trigger Netlify production deployment
         env:
-          NETLIFY_PRODUCTION_DEPLOY_HOOK_URL: ${{ secrets.NETLIFY_PRODUCTION_DEPLOY_HOOK_URL }}
+          DEPLOY_HOOK_URL: ${{ secrets.NETLIFY_PRODUCTION_DEPLOY_HOOK_URL }}
         run: |
-          if [ -z "$NETLIFY_PRODUCTION_DEPLOY_HOOK_URL" ]; then
-            echo "::notice::NETLIFY_PRODUCTION_DEPLOY_HOOK_URL is not configured. Quality checks passed; skipping deploy hook."
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "::notice::No production deploy hook is configured; Netlify Git integration will handle this branch deployment."
             exit 0
           fi
-
-          curl --fail --show-error --silent --request POST "$NETLIFY_PRODUCTION_DEPLOY_HOOK_URL"
+          curl --fail --show-error --silent --request POST "$DEPLOY_HOOK_URL"
