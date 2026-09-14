@@ -64,19 +64,21 @@ const Product = () => {
             </div>
           </div>
 
-          <Button
-            size="lg"
+          <a
+            href="https://www.ziona.app/about"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex w-64 items-center justify-center gap-3 rounded-[10px] bg-[#181419] px-6 py-4 text-lg font-bold text-white shadow-[inset_0px_6px_4px_0px_rgba(166,163,57,0.16)] hover:bg-[#181419]/95 mb-11 lg:mb-0"
           >
             Learn more
-          </Button>
+          </a>
         </div>
       </div>
       <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-12 overflow-hidden lg:px-[82px]">
         <div className="flex flex-col">
           <h3 className="text-center text-[#1a131c] text-4xl lg:text-6xl font-bold font-['Helvetica'] mb-6">Download the App</h3>
           <div className="flex w-full self-center items-center justify-center gap-3 lg:gap-4 lg:justify-center mb-10 lg:mb-0">
-            <button className="flex items-center justify-center gap-2 rounded-2xl bg-black px-3 py-2 text-white transition hover:scale-[1.02] hover:opacity-90 lg:gap-3 lg:px-5 lg:py-3">
+            <a href="https://apps.apple.com/ng/app/ziona/id6768301878" className="flex items-center justify-center gap-2 rounded-2xl bg-black px-3 py-2 text-white transition hover:scale-[1.02] hover:opacity-90 lg:gap-3 lg:px-5 lg:py-3">
               <TbBrandAppleFilled className="h-5 w-5 text-white lg:h-7 lg:w-7" />
               <div className="flex flex-col items-start leading-tight">
                 <span className="text-[9px] font-medium uppercase tracking-wide text-white/70 lg:text-[11px]">
@@ -86,9 +88,9 @@ const Product = () => {
                   App Store
                 </span>
               </div>
-            </button>
+            </a>
 
-            <button className="flex items-center justify-center gap-2 rounded-2xl bg-black px-3 py-2 text-white transition hover:scale-[1.02] hover:opacity-90 lg:gap-3 lg:px-5 lg:py-3">
+            <a href="https://play.google.com/store/apps/details?id=com.zionking.ziona" className="flex items-center justify-center gap-2 rounded-2xl bg-black px-3 py-2 text-white transition hover:scale-[1.02] hover:opacity-90 lg:gap-3 lg:px-5 lg:py-3">
               <img
                 src={playstore}
                 alt="playstore"
@@ -106,7 +108,7 @@ const Product = () => {
                   Google Play
                 </span>
               </div>
-            </button>
+            </a>
           </div>
         </div>
 
