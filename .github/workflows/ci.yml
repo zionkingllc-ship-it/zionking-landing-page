@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: 20
+  NODE_VERSION: 22
 
 jobs:
   promotion-policy:
@@ -105,12 +105,12 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Trigger Netlify staging deployment
+      - name: Trigger Vercel staging deployment
         env:
-          DEPLOY_HOOK_URL: ${{ secrets.NETLIFY_STAGING_DEPLOY_HOOK_URL }}
+          DEPLOY_HOOK_URL: ${{ secrets.VERCEL_STAGING_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$DEPLOY_HOOK_URL" ]; then
-            echo "::notice::No staging deploy hook is configured; Netlify Git integration will handle this branch deployment."
+            echo "::notice::No staging deploy hook is configured; Vercel Git integration will handle this branch deployment."
             exit 0
           fi
           curl --fail --show-error --silent --request POST "$DEPLOY_HOOK_URL"
@@ -124,12 +124,12 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Trigger Netlify production deployment
+      - name: Trigger Vercel production deployment
         env:
-          DEPLOY_HOOK_URL: ${{ secrets.NETLIFY_PRODUCTION_DEPLOY_HOOK_URL }}
+          DEPLOY_HOOK_URL: ${{ secrets.VERCEL_PRODUCTION_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$DEPLOY_HOOK_URL" ]; then
-            echo "::notice::No production deploy hook is configured; Netlify Git integration will handle this branch deployment."
+            echo "::notice::No production deploy hook is configured; Vercel Git integration will handle this branch deployment."
             exit 0
           fi
           curl --fail --show-error --silent --request POST "$DEPLOY_HOOK_URL"
